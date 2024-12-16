@@ -1,33 +1,40 @@
-name: Run Custom Action
+name: Custom Action Workflow
 
 on:
   push:
     branches:
       - main
+  pull_request:
+    branches:
+      - main
 
 jobs:
-  run-action:
+  build:
     runs-on: ubuntu-latest
 
     steps:
-      # Step 1: Checkout code
-      - name: Checkout repository
-        uses: actions/checkout@v3
+    # Checkout code
+    - name: Checkout code
+      uses: actions/checkout@v3
 
-      # Step 2: Set up Node.js (install Node.js environment)
-      - name: Set up Node.js
-        uses: actions/setup-node@v3
-        with:
-          node-version: '16'  # You can specify your required version here.
+    # Set up Node.js
+    - name: Set up Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: '16'
 
-      # Step 3: Install dependencies for the custom action
-      - name: Install dependencies
-        run: |
-          cd .github/actions/my-action
-          npm install  # Install @actions/core and any other dependencies
+    # Clear npm cache
+    - name: Clear npm cache
+      run: npm cache clean --force
 
-      # Step 4: Run the custom action
-      - name: Run custom action
-        uses: ./github/actions/my-action  # Reference to the action in your repo
-        with:
-          name: 'GitHub User'
+    # Install dependencies for my-action with verbose logging
+    - name: Install dependencies for my-action
+      run: |
+        cd .github/actions/my-action
+        npm install --verbose
+
+    # Run custom action
+    - name: Run custom action
+      uses: ./.github/actions/my-action
+      with:
+        my-input: 'your-value'
