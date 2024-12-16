@@ -1,4 +1,4 @@
-name: Test Custom Action
+name: Run Custom Action
 
 on:
   push:
@@ -6,25 +6,28 @@ on:
       - main
 
 jobs:
-  test-action:
+  run-action:
     runs-on: ubuntu-latest
 
     steps:
-      # Step 1: Checkout the repository
+      # Step 1: Checkout code
       - name: Checkout repository
         uses: actions/checkout@v3
 
-      # Step 2: Set up Node.js
+      # Step 2: Set up Node.js (install Node.js environment)
       - name: Set up Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: 16
+          node-version: '16'  # You can specify your required version here.
 
-      # Step 3: Install dependencies
-      - name: Install dependencies for custom action
-        run: npm install
-        working-directory: .github/actions/my-action  # Path to your custom action
+      # Step 3: Install dependencies for the custom action
+      - name: Install dependencies
+        run: |
+          cd .github/actions/my-action
+          npm install  # Install @actions/core and any other dependencies
 
       # Step 4: Run the custom action
-      - name: Run the custom action
-        uses: ./.github/actions/my-action
+      - name: Run custom action
+        uses: ./github/actions/my-action  # Reference to the action in your repo
+        with:
+          name: 'GitHub User'
